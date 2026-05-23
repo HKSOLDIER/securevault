@@ -26,7 +26,7 @@ public class RefreshToken {
     @Column(name = "device_info", length = 500)
     private String deviceInfo;
 
-    @Column(name = "ip_address", columnDefinition = "inet")
+    @Column(name = "ip_address", length = 255)
     private String ipAddress;
 
     @Column(name = "expires_at", nullable = false)

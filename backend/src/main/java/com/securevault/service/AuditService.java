@@ -17,25 +17,33 @@ public class AuditService {
 
     private final EntityManager entityManager;
 
-    @Async
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void log(User user, String action, String ip, String userAgent,
-                    boolean success, String metadata) {
-        try {
-            AuditLog.Action auditAction = AuditLog.Action.valueOf(action);
-            AuditLog entry = AuditLog.builder()
-                .user(user)
-                .action(auditAction)
-                .ipAddress(ip)
-                .userAgent(userAgent != null && userAgent.length() > 500
-                    ? userAgent.substring(0, 500) : userAgent)
-                .metadata(metadata)
-                .success(success)
-                .build();
-            entityManager.persist(entry);
-        } catch (Exception e) {
-            log.error("Failed to write audit log for action {} user {}", action,
-                user != null ? user.getUsername() : "unknown", e);
-        }
+    @Transactional
+public void log(User user, String action, String ip,
+                String userAgent, boolean success,
+                String metadata) {
+
+    try {
+        AuditLog.Action auditAction = AuditLog.Action.valueOf(action);
+
+        AuditLog entry = AuditLog.builder()
+            .user(user)
+            .action(auditAction)
+            .ipAddress(ip)
+            .userAgent(userAgent != null && userAgent.length() > 500
+                ? userAgent.substring(0, 500)
+                : userAgent)
+            .metadata(metadata)
+            .success(success)
+            .build();
+
+        entityManager.persist(entry);
+        entityManager.flush();
+
+    } catch (Exception e) {
+        log.error("Failed to write audit log for action {} user {}",
+            action,
+            user != null ? user.getUsername() : "unknown",
+            e);
     }
+}
 }

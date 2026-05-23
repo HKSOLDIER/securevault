@@ -54,6 +54,7 @@ public class AuthService {
             .build();
 
         user = userRepository.save(user);
+        userRepository.flush();
         auditService.log(user, "REGISTER", ip, userAgent, true, null);
 
         log.info("New user registered: {} ({})", user.getUsername(), user.getId());

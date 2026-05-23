@@ -1,5 +1,7 @@
 package com.securevault.model;
 
+
+
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.OffsetDateTime;
@@ -31,13 +33,13 @@ public class AuditLog {
     @Column(nullable = false, length = 100)
     private Action action;
 
-    @Column(name = "ip_address", columnDefinition = "inet")
+    @Column(name = "ip_address", length = 255)
     private String ipAddress;
 
     @Column(name = "user_agent", length = 500)
     private String userAgent;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "TEXT")
     private String metadata;
 
     @Column(nullable = false)
