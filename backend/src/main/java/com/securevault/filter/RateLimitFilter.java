@@ -43,10 +43,16 @@ public class RateLimitFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+
+        // Skip rate limiting for CORS preflight requests.
+        // OPTIONS requests must pass through freely so Spring Security can
+        // attach CORS headers — consuming a token here causes a 429 with no
+        // CORS headers, which the browser misreports as a CORS error.
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
+
         String path = request.getServletPath();
         String ip   = getClientIp(request);
 
