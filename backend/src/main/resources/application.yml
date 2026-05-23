@@ -44,7 +44,7 @@ server:
 # ─── Security Configuration ──────────────────────────────────────────────────
 security:
   jwt:
-    secret: ${abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz12}
+secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz12}
     access-token-expiry-ms: 900000         # 15 minutes
     refresh-token-expiry-ms: 604800000     # 7 days
   argon2:
@@ -56,7 +56,7 @@ security:
     salt-length: 16
   pepper: ${PEPPER_SECRET:abcdefghijklmnopqrstuvwxyz123456}
   cors:
-    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,https://securevault-three.vercel.app/}
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,https://securevault-three.vercel.app}
   rate-limit:
     login-capacity: 5          # 5 attempts
     login-refill-minutes: 15   # per 15 minutes
