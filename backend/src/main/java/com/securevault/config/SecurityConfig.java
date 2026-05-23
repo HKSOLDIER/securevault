@@ -43,7 +43,7 @@ public class SecurityConfig {
             throws Exception {
         return http
             .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(null))
+            .cors(org.springframework.security.config.Customizer.withDefaults())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .headers(headers -> {
                 headers.contentSecurityPolicy(csp ->
