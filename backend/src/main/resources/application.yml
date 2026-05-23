@@ -56,7 +56,7 @@ security:
     salt-length: 16
   pepper: ${PEPPER_SECRET:changeme-use-a-random-pepper-in-production}
   cors:
-    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,https://your-app.vercel.app}
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,https://securevault-three.vercel.app/}
   rate-limit:
     login-capacity: 5          # 5 attempts
     login-refill-minutes: 15   # per 15 minutes
