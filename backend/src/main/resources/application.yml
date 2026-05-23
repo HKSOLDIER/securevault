@@ -42,14 +42,14 @@ server:
     include-stacktrace: never
 
 # ─── Security Configuration ──────────────────────────────────────────────────
+# ─── Security Configuration ──────────────────────────────────────────────────
 security:
   jwt:
-secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz12}
-    access-token-expiry-ms: 900000         # 15 minutes
-    refresh-token-expiry-ms: 604800000     # 7 days
+    secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz12}
+    access-token-expiry-ms: 900000
+    refresh-token-expiry-ms: 604800000
   argon2:
-    # Server-side Argon2id config (for pepper-based re-hash verification)
-    memory-kb: 65536        # 64 MB
+    memory-kb: 65536
     iterations: 3
     parallelism: 4
     hash-length: 32
@@ -58,8 +58,8 @@ secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvw
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:5173,https://securevault-three.vercel.app}
   rate-limit:
-    login-capacity: 5          # 5 attempts
-    login-refill-minutes: 15   # per 15 minutes
+    login-capacity: 5
+    login-refill-minutes: 15
     register-capacity: 3
     register-refill-hours: 1
 
