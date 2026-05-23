@@ -105,9 +105,9 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsernameOrEmail(username, username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-    }
+    // @Bean
+    // public UserDetailsService userDetailsService() {
+    //     return username -> userRepository.findByUsernameOrEmail(username, username)
+    //         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    // }
 }
