@@ -9,22 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
-// ─── Custom exceptions ────────────────────────────────────────────────────────
-class AuthException extends RuntimeException {
-    public AuthException(String msg) { super(msg); }
-}
-
-class ConflictException extends RuntimeException {
-    public ConflictException(String msg) { super(msg); }
-}
-
-class AccountLockedException extends RuntimeException {
-    public AccountLockedException(String msg) { super(msg); }
-}
-
-class NotFoundException extends RuntimeException {
-    public NotFoundException(String msg) { super(msg); }
-}
 
 // ─── Global Handler ───────────────────────────────────────────────────────────
 @RestControllerAdvice
