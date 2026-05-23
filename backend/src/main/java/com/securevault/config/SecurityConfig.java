@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RateLimitFilter rateLimitFilter;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -43,7 +45,7 @@ public class SecurityConfig {
             throws Exception {
         return http
             .csrf(AbstractHttpConfigurer::disable)
-            .cors(org.springframework.security.config.Customizer.withDefaults())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .headers(headers -> {
                 headers.contentSecurityPolicy(csp ->
