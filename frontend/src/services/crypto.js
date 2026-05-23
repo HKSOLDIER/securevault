@@ -1,78 +1,83 @@
 /**
- * crypto.js — Client-Side Argon2id Hashing
+ * crypto.js — Client-Side Password Hashing via Web Crypto API
+ *
+ * Replaces argon2-browser with PBKDF2 (built into every modern browser).
+ * No external packages, no WASM, no bundler issues.
  *
  * WHY CLIENT-SIDE HASHING?
  * 1. The raw password NEVER travels over the network
  * 2. Even TLS interception gets only the hash, not the password
- * 3. Server applies a second Argon2id pass + pepper — two independent hash layers
+ * 3. Server applies a second Argon2id pass + pepper — two independent layers
  *
- * ARGON2ID PARAMETERS (OWASP 2024 minimum recommendations):
- *   - Memory: 64 MB
- *   - Iterations: 3
- *   - Parallelism: 4
- *   - Salt: 16 bytes (random per-user, derived from email for determinism during login)
- *   - Output: 32 bytes (256-bit)
+ * PBKDF2 PARAMETERS:
+ *   - Algorithm: PBKDF2 with SHA-256
+ *   - Iterations: 310,000 (NIST SP 800-132 recommendation for SHA-256)
+ *   - Salt: 16 bytes derived deterministically from the identifier
+ *   - Output: 32 bytes (256-bit), base64-encoded
  */
 
-import argon2 from 'argon2-browser';
-
-const ARGON2_PARAMS = {
-  memory: 65536,        // 64 MB
-  iterations: 3,
-  parallelism: 4,
-  hashLen: 32,
-  type: argon2.ArgonType.Argon2id,
-};
+const PBKDF2_ITERATIONS = 310_000;
+const KEY_LENGTH = 256; // bits
 
 /**
- * Derives a deterministic salt from a user identifier (email/username).
- * This ensures the same hash can be reproduced on login without storing the salt.
- * The real salt randomness comes from the server's Argon2id pass.
+ * Derives a deterministic salt from the user's identifier (email).
+ * Same result on every login without storing the salt client-side.
  */
 async function deriveSalt(identifier) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode('securevault:' + identifier.toLowerCase());
+  const enc = new TextEncoder();
+  const data = enc.encode('securevault:' + identifier.toLowerCase());
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   return new Uint8Array(hashBuffer).slice(0, 16);
 }
 
 /**
- * Hash the password client-side using Argon2id.
- * Call this BEFORE sending to the server.
+ * Hash the password client-side using PBKDF2-SHA256.
+ * Call this BEFORE sending credentials to the server.
  *
- * @param {string} password - The raw password entered by the user
+ * @param {string} password   - Raw password entered by the user
  * @param {string} identifier - Email or username (used for salt derivation)
- * @returns {Promise<string>} Base64-encoded Argon2id hash
+ * @returns {Promise<string>} Base64-encoded hash
  */
 export async function hashPasswordForTransmission(password, identifier) {
   if (!password || password.length < 8) {
     throw new Error('Password must be at least 8 characters');
   }
 
+  const enc = new TextEncoder();
   const salt = await deriveSalt(identifier);
 
-  const result = await argon2.hash({
-    pass: password,
-    salt,
-    ...ARGON2_PARAMS,
-  });
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    enc.encode(password),
+    { name: 'PBKDF2' },
+    false,
+    ['deriveBits']
+  );
 
-  // Return the raw hash bytes as base64, not the full encoded string
-  return btoa(String.fromCharCode(...result.hashHex
-    .match(/.{1,2}/g)
-    .map(byte => parseInt(byte, 16))));
+  const hashBuffer = await crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      hash: 'SHA-256',
+      salt,
+      iterations: PBKDF2_ITERATIONS,
+    },
+    keyMaterial,
+    KEY_LENGTH
+  );
+
+  // Base64-encode the raw hash bytes
+  return btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
 }
 
 /**
- * Validates password strength before hashing.
- * Returns an array of validation messages (empty = valid).
+ * Validates password strength. Returns array of unmet requirements (empty = valid).
  */
 export function validatePasswordStrength(password) {
   const errors = [];
-  if (password.length < 12) errors.push('At least 12 characters');
-  if (!/[A-Z]/.test(password)) errors.push('One uppercase letter');
-  if (!/[a-z]/.test(password)) errors.push('One lowercase letter');
-  if (!/[0-9]/.test(password)) errors.push('One number');
+  if (password.length < 12)        errors.push('At least 12 characters');
+  if (!/[A-Z]/.test(password))     errors.push('One uppercase letter');
+  if (!/[a-z]/.test(password))     errors.push('One lowercase letter');
+  if (!/[0-9]/.test(password))     errors.push('One number');
   if (!/[^A-Za-z0-9]/.test(password)) errors.push('One special character');
   return errors;
 }

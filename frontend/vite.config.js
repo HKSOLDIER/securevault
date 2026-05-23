@@ -6,16 +6,12 @@ export default defineConfig({
   server: {
     port: 5173,
   },
-  optimizeDeps: {
-    exclude: ['argon2-browser'],
-  },
   build: {
     outDir: 'dist',
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          crypto: ['argon2-browser'],
         },
       },
     },
