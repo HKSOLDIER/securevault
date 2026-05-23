@@ -44,17 +44,17 @@ public class SecurityConfig {
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
             // ── Security headers ──────────────────────────────────────────
-            .headers(headers -> headers
-                .contentSecurityPolicy(csp ->
-                    csp.policyDirectives("default-src 'self'; frame-ancestors 'none'"))
-                .referrerPolicy(ref ->
-                    ref.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
-                .permissionsPolicy(p -> p.policy("geolocation=(), microphone=(), camera=()"))
-                .frameOptions(frame -> frame.deny())
-                .httpStrictTransportSecurity(hsts -> hsts
+            .headers(headers -> {
+                headers.contentSecurityPolicy(csp ->
+                    csp.policyDirectives("default-src 'self'; frame-ancestors 'none'"));
+                headers.referrerPolicy(ref ->
+                    ref.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN));
+                headers.permissionsPolicy(p -> p.policy("geolocation=(), microphone=(), camera=()"));
+                headers.frameOptions(frame -> frame.deny());
+                headers.httpStrictTransportSecurity(hsts -> hsts
                     .includeSubDomains(true)
-                    .maxAgeInSeconds(31536000))
-            )
+                    .maxAgeInSeconds(31536000));
+            })
 
             // ── Route authorization ────────────────────────────────────────
             .authorizeHttpRequests(auth -> auth

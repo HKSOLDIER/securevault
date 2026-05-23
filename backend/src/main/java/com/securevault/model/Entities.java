@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @Builder
-class RefreshToken {
+public class AuditLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
