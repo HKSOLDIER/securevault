@@ -2,7 +2,7 @@ package com.securevault.config;
 
 import com.securevault.filter.JwtAuthFilter;
 import com.securevault.filter.RateLimitFilter;
-import com.securevault.repository.UserRepository;
+// import com.securevault.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,14 +36,14 @@ public class SecurityConfig {
     private final RateLimitFilter rateLimitFilter;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    // private final UserRepository userRepository;
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsernameOrEmail(username, username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-    }
-    
+    // @Bean
+    // public UserDetailsService userDetailsService() {
+    //     return username -> userRepository.findByUsernameOrEmail(username, username)
+    //         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    // }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
