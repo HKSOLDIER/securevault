@@ -28,10 +28,9 @@ import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWrite
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthFilter jwtAuthFilter;
-    private final RateLimitFilter rateLimitFilter;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RateLimitFilter rateLimitFilter;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -40,7 +39,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter)
+            throws Exception {
         return http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(null))
