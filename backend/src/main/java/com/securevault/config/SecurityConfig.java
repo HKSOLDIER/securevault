@@ -2,12 +2,7 @@ package com.securevault.config;
 
 import com.securevault.filter.JwtAuthFilter;
 import com.securevault.filter.RateLimitFilter;
-// import com.securevault.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import com.securevault.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -34,29 +30,21 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final RateLimitFilter rateLimitFilter;
-    private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    // private final UserRepository userRepository;
 
-    // @Bean
-    // public UserDetailsService userDetailsService() {
-    //     return username -> userRepository.findByUsernameOrEmail(username, username)
-    //         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-    // }
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> userRepository.findByUsernameOrEmail(username, username)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            // ── Disable CSRF (stateless JWT API) ──────────────────────────
             .csrf(AbstractHttpConfigurer::disable)
-
-            // ── CORS handled by CorsConfig bean ───────────────────────────
-            .cors(cors -> cors.configurationSource(null)) // uses CorsConfig
-
-            // ── Stateless session ─────────────────────────────────────────
+            .cors(cors -> cors.configurationSource(null))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-            // ── Security headers ──────────────────────────────────────────
             .headers(headers -> {
                 headers.contentSecurityPolicy(csp ->
                     csp.policyDirectives("default-src 'self'; frame-ancestors 'none'"));
@@ -68,8 +56,6 @@ public class SecurityConfig {
                     .includeSubDomains(true)
                     .maxAgeInSeconds(31536000));
             })
-
-            // ── Route authorization ────────────────────────────────────────
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/auth/register",
@@ -80,21 +66,16 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-
-            // ── Auth provider ──────────────────────────────────────────────
             .authenticationProvider(authenticationProvider())
-
-            // ── Filters: rate limit → JWT ──────────────────────────────────
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-
             .build();
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        provider.setUserDetailsService(userDetailsService());
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
@@ -104,10 +85,4 @@ public class SecurityConfig {
             throws Exception {
         return config.getAuthenticationManager();
     }
-
-    // @Bean
-    // public UserDetailsService userDetailsService() {
-    //     return username -> userRepository.findByUsernameOrEmail(username, username)
-    //         .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-    // }
 }
