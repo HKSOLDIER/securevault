@@ -11,6 +11,7 @@ D:\My Work\Claude_Valut\securevault\backend\src\main\java\com\securevault\dto\Re
 D:\My Work\Claude_Valut\securevault\backend\src\main\java\com\securevault\dto\CredentialDtos.java
 D:\My Work\Claude_Valut\securevault\backend\src\main\java\com\securevault\config\PasswordConfig.java
 D:\My Work\Claude_Valut\securevault\backend\src\main\java\com\securevault\exception\NotFoundException.java
+D:\My Work\Claude_Valut\securevault\backend\src\main\java\com\securevault\service\EmailService.java
 D:\My Work\Claude_Valut\securevault\backend\src\main\java\com\securevault\exception\AppExceptions.java
 D:\My Work\Claude_Valut\securevault\backend\src\main\java\com\securevault\dto\AuthDtos.java
 D:\My Work\Claude_Valut\securevault\backend\src\main\java\com\securevault\exception\AccountLockedException.java

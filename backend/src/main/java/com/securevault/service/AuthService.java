@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -19,6 +21,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;   // Argon2PasswordEncoder bean
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
     /**
      * Register a new user.
@@ -32,13 +35,20 @@ public class AuthService {
 
         // Argon2id hash — computationally expensive by design
         String passwordHash = passwordEncoder.encode(request.getPassword());
+        String verificationToken = UUID.randomUUID().toString();
 
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .passwordHash(passwordHash)
+                .verified(false)
+                .verificationToken(verificationToken)
+                .verificationTokenExpiry(LocalDateTime.now().plusHours(24))
                 .build();
-
+        emailService.sendVerificationEmail(
+                user.getEmail(),
+                verificationToken
+        );
         user = userRepository.save(user);
         log.info("New user registered: {}", user.getEmail());
 
@@ -54,6 +64,10 @@ public class AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(AppExceptions.InvalidCredentialsException::new);
 
+        if (!user.isVerified()) {
+            throw new RuntimeException(
+                    "Please verify your email before login");
+        }
         // Argon2id verify — timing-safe comparison
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new AppExceptions.InvalidCredentialsException();
@@ -76,5 +90,25 @@ public class AuthService {
         response.setRefreshToken(null);
         response.setUser(userInfo);
         return response;
+    }
+
+    @Transactional
+    public void verifyEmail(String token) {
+
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() ->
+                        new RuntimeException("Invalid verification token"));
+
+        if (user.getVerificationTokenExpiry()
+                .isBefore(LocalDateTime.now())) {
+
+            throw new RuntimeException("Verification token expired");
+        }
+
+        user.setVerified(true);
+        user.setVerificationToken(null);
+        user.setVerificationTokenExpiry(null);
+
+        userRepository.save(user);
     }
 }

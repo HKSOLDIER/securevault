@@ -32,6 +32,7 @@ com\securevault\dto\AuthResponse$AuthResponseBuilder.class
 com\securevault\controller\AuthController.class
 com\securevault\exception\GlobalExceptionHandler$ErrorResponse.class
 com\securevault\security\JwtUtil.class
+com\securevault\service\EmailService.class
 com\securevault\dto\ErrorResponse.class
 com\securevault\exception\GlobalExceptionHandler.class
 com\securevault\model\User.class

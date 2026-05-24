@@ -13,6 +13,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.Instant;
 import java.util.UUID;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users",
        uniqueConstraints = @UniqueConstraint(columnNames = "email"))
@@ -27,7 +29,7 @@ public class User {
     private UUID id;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private String name;
 
     @Email
@@ -42,6 +44,16 @@ public class User {
     @NotBlank
     @Column(nullable = false)
     private String passwordHash;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean verified = false;
+
+    
+    private String verificationToken;
+
+    private LocalDateTime verificationTokenExpiry;
+
 
     @CreationTimestamp
     @Column(updatable = false)
