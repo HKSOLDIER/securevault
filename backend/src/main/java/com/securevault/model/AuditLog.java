@@ -34,7 +34,7 @@ public class AuditLog {
     @Column(nullable = false, length = 100)
     private Action action;
 
-    @Convert(converter = InetAddressConverter.class)
+    
     @Column(name = "ip_address", length = 255)
     private String ipAddress;
 

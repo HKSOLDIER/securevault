@@ -3,10 +3,9 @@ spring:
     name: securevault-api
 
   datasource:
-      url: jdbc:postgresql://ep-wandering-scene-aqg8k6so-pooler.c-8.us-east-1.aws.neon.tech:5432/neondb?sslmode=require
-      username: neondb_owner
-      password: npg_vyLUa3q9fFKH
-      driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL:jdbc:postgresql://neondb_owner:npg_vyLUa3q9fFKH@ep-wandering-scene-aqg8k6so-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require}
+    username: ${DATABASE_USERNAME:neondb_owner}
+    password: ${DATABASE_PASSWORD:npg_vyLUa3q9fFKH}
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5

@@ -27,7 +27,7 @@ public class RefreshToken {
     @Column(name = "device_info", length = 500)
     private String deviceInfo;
 
-    @Convert(converter = InetAddressConverter.class)
+    
     @Column(name = "ip_address")
     private String ipAddress;
 
