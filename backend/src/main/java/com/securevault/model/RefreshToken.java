@@ -1,10 +1,11 @@
 package com.securevault.model;
 
+import com.securevault.util.InetAddressConverter;
+import jakarta.persistence.Convert;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.OffsetDateTime;
 import java.util.UUID;
-import com.securevault.util.InetAddressConverter;
 
 @Entity
 @Table(name = "refresh_tokens")
@@ -27,7 +28,7 @@ public class RefreshToken {
     @Column(name = "device_info", length = 500)
     private String deviceInfo;
 
-    
+    @Convert(converter = InetAddressConverter.class)
     @Column(name = "ip_address")
     private String ipAddress;
 
