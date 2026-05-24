@@ -17,7 +17,7 @@ public class AuditService {
 
     private final EntityManager entityManager;
 
-    @Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW)
 public void log(User user, String action, String ip,
                 String userAgent, boolean success,
                 String metadata) {

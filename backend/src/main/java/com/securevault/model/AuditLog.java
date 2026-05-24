@@ -1,7 +1,8 @@
 package com.securevault.model;
 
 
-
+import com.securevault.util.InetAddressConverter;
+import jakarta.persistence.Convert;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.OffsetDateTime;
@@ -33,6 +34,7 @@ public class AuditLog {
     @Column(nullable = false, length = 100)
     private Action action;
 
+    @Convert(converter = InetAddressConverter.class)
     @Column(name = "ip_address", length = 255)
     private String ipAddress;
 
