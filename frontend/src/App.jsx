@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-const API_BASE = "https://securevault-ics5.onrender.com/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL + "/api";
 
 const COLORS = {
   bg: "#0a0c10",
