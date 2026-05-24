@@ -1,58 +1,58 @@
 package com.securevault.exception;
 
-import com.securevault.dto.ErrorResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.stream.Collectors;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
-
-// ─── Global Handler ───────────────────────────────────────────────────────────
 @RestControllerAdvice
-@Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AuthException.class)
-    public ResponseEntity<ErrorResponse> handleAuth(AuthException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-            .body(ErrorResponse.of(401, "Unauthorized", e.getMessage()));
+    record ErrorResponse(int status, String error, String message, Instant timestamp) {}
+
+    @ExceptionHandler(AppExceptions.EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleEmailExists(AppExceptions.EmailAlreadyExistsException ex) {
+        return build(HttpStatus.CONFLICT, ex.getMessage());
     }
 
-    @ExceptionHandler(AccountLockedException.class)
-    public ResponseEntity<ErrorResponse> handleLocked(AccountLockedException e) {
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-            .body(ErrorResponse.of(429, "Account Locked", e.getMessage()));
+    @ExceptionHandler(AppExceptions.InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(AppExceptions.InvalidCredentialsException ex) {
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage());
     }
 
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(ConflictException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(ErrorResponse.of(409, "Conflict", e.getMessage()));
+    @ExceptionHandler(AppExceptions.CredentialNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCredentialNotFound(AppExceptions.CredentialNotFoundException ex) {
+        return build(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ErrorResponse.of(404, "Not Found", e.getMessage()));
+    @ExceptionHandler(AppExceptions.EncryptionException.class)
+    public ResponseEntity<ErrorResponse> handleEncryption(AppExceptions.EncryptionException ex) {
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Encryption error");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException e) {
-        String message = e.getBindingResult().getFieldErrors().stream()
-            .map(FieldError::getDefaultMessage)
-            .collect(Collectors.joining(", "));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponse.of(400, "Validation Failed", message));
+    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(err -> {
+            String field = ((FieldError) err).getField();
+            errors.put(field, err.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneric(Exception e) {
-        log.error("Unhandled exception", e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ErrorResponse.of(500, "Internal Server Error",
-                "An unexpected error occurred"));
+    public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+    }
+
+    private ResponseEntity<ErrorResponse> build(HttpStatus status, String message) {
+        return ResponseEntity.status(status)
+            .body(new ErrorResponse(status.value(), status.getReasonPhrase(), message, Instant.now()));
     }
 }

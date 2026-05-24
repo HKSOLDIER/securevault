@@ -1,7 +1,6 @@
 package com.securevault.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,34 +13,46 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users",
-       uniqueConstraints = @UniqueConstraint(columnNames = "email"))
+@Table(name = "credentials")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Credential {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @NotBlank
     @Column(nullable = false)
-    private String name;
+    private String title;
 
-    @Email
-    @NotBlank
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column
+    private String username;
 
     /**
-     * Argon2id hash of the master password.
-     * Never store or log the raw password.
+     * AES-256-GCM encrypted ciphertext of the actual password.
+     * Stored as Base64. The IV is prepended (first 12 bytes after decode).
      */
-    @NotBlank
-    @Column(nullable = false)
-    private String passwordHash;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String encryptedPassword;
+
+    @Column
+    private String url;
+
+    @Column
+    private String category;
+
+    @Column
+    private String notes;
+
+    @Column
+    private String emoji;
 
     @CreationTimestamp
     @Column(updatable = false)
