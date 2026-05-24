@@ -38,7 +38,9 @@ public class AuthDtos {
 
     @Data
     public static class AuthResponse {
-        private String token;
+        // private String token;
+        private String accessToken;
+        private String refreshToken;
         private UserInfo user;
 
         @Data

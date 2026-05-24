@@ -72,7 +72,8 @@ public class AuthService {
         userInfo.setEmail(user.getEmail());
 
         AuthDtos.AuthResponse response = new AuthDtos.AuthResponse();
-        response.setToken(token);
+        response.setAccessToken(token);
+        response.setRefreshToken(null);
         response.setUser(userInfo);
         return response;
     }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Shield, Eye, EyeOff, Lock, User, Mail, AlertCircle, CheckCircle } from 'lucide-react';
 import { authApi } from '../services/api';
-import { hashPasswordForTransmission, validatePasswordStrength, passwordStrengthScore } from '../services/crypto';
+import { validatePasswordStrength, passwordStrengthScore } from '../services/crypto';
 import { useAuthStore } from '../store/authStore';
 import toast from 'react-hot-toast';
 
@@ -41,12 +41,13 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      const clientPasswordHash = await hashPasswordForTransmission(form.password, form.email);
       const { data } = await authApi.register({
-        username: form.username,
-        email: form.email,
-        clientPasswordHash,
-      });
+      name: form.username,
+      email: form.email,
+      password: form.password,
+    });
+      // setAuth(data.user, data.accessToken, data.refreshToken);
+      // setAuth(data.user, data.token, null);
       setAuth(data.user, data.accessToken, data.refreshToken);
       toast.success('Vault created! Welcome to SecureVault.');
       navigate('/dashboard');

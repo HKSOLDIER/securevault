@@ -16,6 +16,17 @@ public class GlobalExceptionHandler {
 
     record ErrorResponse(int status, String error, String message, Instant timestamp) {}
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleException(Exception ex) {
+
+        ex.printStackTrace();
+
+        return ResponseEntity.status(500).body(
+                Map.of(
+                        "error", ex.getMessage()
+                )
+        );
+    }
     @ExceptionHandler(AppExceptions.EmailAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleEmailExists(AppExceptions.EmailAlreadyExistsException ex) {
         return build(HttpStatus.CONFLICT, ex.getMessage());
@@ -46,10 +57,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
-    }
+
 
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String message) {
         return ResponseEntity.status(status)

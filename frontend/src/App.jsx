@@ -371,7 +371,7 @@ function LoginPage({ onNav, onLogin }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Invalid credentials");
-      onLogin(data.token, data.user);
+      onLogin(data.accessToken, data.user);
     } catch (e) {
       setError(e.message);
     } finally { setLoading(false); }
@@ -419,7 +419,7 @@ function RegisterPage({ onNav, onLogin }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Registration failed");
-      onLogin(data.token, data.user);
+      onLogin(data.accessToken, data.user);
     } catch (e) {
       setError(e.message);
     } finally { setLoading(false); }
