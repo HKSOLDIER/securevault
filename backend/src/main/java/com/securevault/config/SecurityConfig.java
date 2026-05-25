@@ -14,18 +14,34 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated()
-                );
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http.build();
-    }
+    http
+            .csrf(csrf -> csrf.disable())
+
+            .cors(cors -> {})
+
+            .authorizeHttpRequests(auth -> auth
+
+                    .requestMatchers(
+                            org.springframework.http.HttpMethod.OPTIONS,
+                            "/**"
+                    ).permitAll()
+
+                    .requestMatchers("/auth/**")
+                    .permitAll()
+
+                    .anyRequest()
+                    .authenticated()
+            )
+
+            .httpBasic(httpBasic -> httpBasic.disable())
+
+            .formLogin(form -> form.disable());
+
+    return http.build();
+}
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
