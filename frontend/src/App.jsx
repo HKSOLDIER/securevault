@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import VerifyEmail from "./pages/VerifyEmail";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL + "/api";
 
@@ -731,7 +732,15 @@ export default function App() {
   const [page, setPage] = useState("home");
   const [token, setToken] = useState(localStorage.getItem("sv_token") || null);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("sv_user") || "null"));
+  useEffect(() => {
 
+  const path = window.location.pathname;
+
+  if (path === "/verify-email") {
+    setPage("verify-email");
+  }
+
+}, []);
   useEffect(() => {
     if (token) setPage("dashboard");
   }, []);
@@ -758,6 +767,7 @@ export default function App() {
         {page === "login" && <LoginPage onNav={setPage} onLogin={handleLogin} />}
         {page === "register" && <RegisterPage onNav={setPage} onLogin={handleLogin} />}
         {page === "dashboard" && <Dashboard user={user} onLogout={handleLogout} />}
+        {page === "verify-email" && <VerifyEmail />}
       </div>
     </div>
   );
