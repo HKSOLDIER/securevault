@@ -45,10 +45,21 @@ public class AuthService {
                 .verificationToken(verificationToken)
                 .verificationTokenExpiry(LocalDateTime.now().plusHours(24))
                 .build();
-        emailService.sendVerificationEmail(
-                user.getEmail(),
-                verificationToken
-        );
+
+        try {
+
+                emailService.sendVerificationEmail(
+                        user.getEmail(),
+                        verificationToken
+                );
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+                log.error("Failed to send verification email");
+
+            }
         user = userRepository.save(user);
         log.info("New user registered: {}", user.getEmail());
 
