@@ -25,6 +25,7 @@ com\securevault\dto\CredentialDtos$CredentialRequest.class
 com\securevault\dto\AuthDtos$AuthResponse$UserInfo.class
 com\securevault\model\Credential$CredentialBuilder.class
 com\securevault\service\AuthService.class
+com\securevault\dto\AuthDtos$MessageResponse.class
 com\securevault\dto\UserDto$UserDtoBuilder.class
 com\securevault\dto\AuthResponse.class
 com\securevault\model\VaultEntry.class
