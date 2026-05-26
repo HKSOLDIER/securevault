@@ -525,7 +525,7 @@ function AddModal({ onClose, onAdd }) {
     if (!siteName || !username || !password) return;
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("sv_token");
       const res = await fetch(`${API_BASE}/credentials`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
