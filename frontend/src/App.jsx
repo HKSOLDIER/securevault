@@ -420,7 +420,11 @@ function RegisterPage({ onNav, onLogin }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Registration failed");
-      onLogin(data.accessToken, data.user);
+      // onLogin(data.accessToken, data.user);
+      alert(data.message);
+      // alert("Verification email sent. Please verify before login.");
+      onNav("login");
+      
     } catch (e) {
       setError(e.message);
     } finally { setLoading(false); }

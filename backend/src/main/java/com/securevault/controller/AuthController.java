@@ -16,7 +16,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthDtos.AuthResponse> register(
+    public ResponseEntity<AuthDtos.MessageResponse> register(
             @Valid @RequestBody AuthDtos.RegisterRequest request) {
 
         return ResponseEntity

@@ -28,7 +28,9 @@ public class AuthService {
      * The master password is hashed with Argon2id before persistence.
      */
     @Transactional
-    public AuthDtos.AuthResponse register(AuthDtos.RegisterRequest request) {
+    // public AuthDtos.AuthResponse register(AuthDtos.RegisterRequest request) 
+    public AuthDtos.MessageResponse register(AuthDtos.RegisterRequest request)
+    {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppExceptions.EmailAlreadyExistsException(request.getEmail());
         }
@@ -46,24 +48,27 @@ public class AuthService {
                 .verificationTokenExpiry(LocalDateTime.now().plusHours(24))
                 .build();
 
+        user = userRepository.save(user);
         try {
 
-                emailService.sendVerificationEmail(
-                        user.getEmail(),
-                        verificationToken
-                );
+            emailService.sendVerificationEmail(
+                    user.getEmail(),
+                    verificationToken
+            );
 
-            } catch (Exception e) {
+            log.info("Verification email sent to {}", user.getEmail());
 
-                e.printStackTrace();
+        } catch (Exception e) {
 
-                log.error("Failed to send verification email");
+            e.printStackTrace();
 
-            }
-        user = userRepository.save(user);
+            log.error("Failed to send verification email: {}", e.getMessage());
+
+        }
         log.info("New user registered: {}", user.getEmail());
 
-        return buildAuthResponse(user);
+        // return buildAuthResponse(user);
+        return new AuthDtos.MessageResponse("Verification email sent. Please verify before login.");
     }
 
     /**
