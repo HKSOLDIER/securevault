@@ -9,7 +9,7 @@ export default function VerifyEmail() {
 
     useEffect(() => {
 
-        const token = searchParams.get("token");
+        const token = searchParams.get("sv_token");
 
         const API_BASE =import.meta.env.VITE_API_BASE_URL + "/api";
 
