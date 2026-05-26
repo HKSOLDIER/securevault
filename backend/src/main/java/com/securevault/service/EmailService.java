@@ -17,6 +17,7 @@ public class EmailService {
 
     public void sendVerificationEmail(String to, String token) {
 
+        System.out.println("MAIL USERNAME = " + System.getenv("MAIL_USERNAME"));
         String verifyLink =
                 frontendUrl + "/verify-email?token=" + token;
 

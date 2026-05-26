@@ -529,7 +529,14 @@ function AddModal({ onClose, onAdd }) {
       const res = await fetch(`${API_BASE}/credentials`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({ siteName, username, password, category, favicon }),
+        body: JSON.stringify({
+            title: siteName,
+            username: username,
+            password: password,
+            category: category,
+            emoji: favicon
+        }), 
+        // JSON.stringify({ siteName, username, password, category, favicon }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
