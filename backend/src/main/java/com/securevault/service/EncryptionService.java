@@ -34,6 +34,7 @@ public class EncryptionService {
         System.out.println("KEY LENGTH = " + keyBytes.length);
 
         System.out.println("MAIL USERNAME = " + System.getenv("MAIL_USERNAME"));
+        System.out.println("MAIL PASSWORD = " + System.getenv("MAIL_PASSWORD"));
         if (keyBytes.length != AES_KEY_LENGTH) {
             throw new IllegalArgumentException(
                 "Encryption key must be 32 bytes (256 bits). Got: " + keyBytes.length);
