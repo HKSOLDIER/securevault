@@ -49,8 +49,10 @@ export default function Register() {
       // setAuth(data.user, data.accessToken, data.refreshToken);
       // setAuth(data.user, data.token, null);
       setAuth(data.user, data.accessToken, data.refreshToken);
-      toast.success('Vault created! Welcome to SecureVault.');
-      navigate('/dashboard');
+      // toast.success('Vault created! Welcome to SecureVault.');
+      // navigate('/dashboard');
+      toast.success('Check your email to verify your account!');
+      navigate('/login'); 
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
