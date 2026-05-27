@@ -32,6 +32,8 @@ public class EncryptionService {
         byte[] keyBytes = Base64.getDecoder().decode(base64Key);
         System.out.println("KEY = " + keyBytes);
         System.out.println("KEY LENGTH = " + keyBytes.length);
+
+        System.out.println("MAIL USERNAME = " + System.getenv("MAIL_USERNAME"));
         if (keyBytes.length != AES_KEY_LENGTH) {
             throw new IllegalArgumentException(
                 "Encryption key must be 32 bytes (256 bits). Got: " + keyBytes.length);
