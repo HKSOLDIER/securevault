@@ -38,7 +38,7 @@ public class AuthService {
         // Argon2id hash — computationally expensive by design
         String passwordHash = passwordEncoder.encode(request.getPassword());
         String verificationToken = UUID.randomUUID().toString();
-
+        System.out.println("MAIL USERNAME = " + System.getenv("MAIL_USERNAME"));
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
