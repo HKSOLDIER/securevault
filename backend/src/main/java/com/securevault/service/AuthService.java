@@ -34,7 +34,8 @@ public class AuthService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppExceptions.EmailAlreadyExistsException(request.getEmail());
         }
-
+        System.out.println("REGISTER STEP 1: Checking if email exists");
+        System.out.println("REGISTER EMAIL = " + request.getEmail());
         // Argon2id hash — computationally expensive by design
         String passwordHash = passwordEncoder.encode(request.getPassword());
         String verificationToken = UUID.randomUUID().toString();
@@ -50,11 +51,12 @@ public class AuthService {
 
         user = userRepository.save(user);
         try {
-
+            System.out.println("REGISTER STEP 1: User saved with id = " + user.getId());
             emailService.sendVerificationEmail(
                     user.getEmail(),
                     verificationToken
             );
+            System.out.println("REGISTER STEP 2: Email service completed");
 
             log.info("Verification email sent to {}", user.getEmail());
 
