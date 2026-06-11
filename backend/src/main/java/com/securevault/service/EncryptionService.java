@@ -31,6 +31,7 @@ public class EncryptionService {
     public EncryptionService(@Value("${app.encryption.key}") String base64Key) {
         byte[] keyBytes = Base64.getDecoder().decode(base64Key);
         System.out.println("KEY = " + keyBytes);
+        log.info("Encryption key length: {}", keyBytes.length);
         System.out.println("KEY LENGTH = " + keyBytes.length);
 
         System.out.println("MAIL USERNAME = " + System.getenv("MAIL_USERNAME"));
