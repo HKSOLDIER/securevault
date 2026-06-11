@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import VerifyEmail from "./pages/VerifyEmail";
+
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL + "/api";
 
@@ -529,7 +531,10 @@ function AddModal({ onClose, onAdd }) {
     if (!siteName || !username || !password) return;
     setLoading(true);
     try {
-      const token = localStorage.getItem("sv_token");
+      // const token = localStorage.getItem("sv_token");
+      const [searchParams] = useSearchParams();
+
+      const token = searchParams.get("token");
       const res = await fetch(`${API_BASE}/credentials`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
@@ -778,7 +783,8 @@ export default function App() {
         {page === "login" && <LoginPage onNav={setPage} onLogin={handleLogin} />}
         {page === "register" && <RegisterPage onNav={setPage} onLogin={handleLogin} />}
         {page === "dashboard" && <Dashboard user={user} onLogout={handleLogout} />}
-        {page === "verify-email" && <VerifyEmail />}
+        {/* {page === "verify-email" && <VerifyEmail />} */}
+        {page === "verify-email" && (<VerifyEmail onNav={setPage} />)}
       </div>
     </div>
   );
