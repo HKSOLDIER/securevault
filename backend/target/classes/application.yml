@@ -54,8 +54,6 @@ server:
   error:
     include-message: never
     include-stacktrace: never
-resend:
-  api-key: ${RESEND_API_KEY}
 
 # ─── Security Configuration ──────────────────────────────────────────────────
 # ─── Security Configuration ──────────────────────────────────────────────────
