@@ -48,9 +48,16 @@ public class EmailService {
     @Value("${app.frontend.url}")
     private String frontendUrl;
 
+    @Value("${spring.mail.port}")
+    private String mailPort;
+
     @Value("${spring.mail.username}")
     private String mailUsername;
 
+    @jakarta.annotation.PostConstruct
+    public void checkMailConfig() {
+        System.out.println("MAIL PORT = " + mailPort);
+    }
     public void sendVerificationEmail(String to, String token) {
 
         System.out.println("=== EMAIL DEBUG START ===");
