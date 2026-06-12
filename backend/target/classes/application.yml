@@ -40,8 +40,8 @@ spring:
           auth: true
           starttls:
             enable: true
-          host: ${MAIL_HOST:smtp.example.com}
-          port: ${MAIL_PORT:465}
+          host: smtp.example.com
+          port: 465
           username: ${MAIL_USERNAME}
           password: ${MAIL_PASSWORD}
 
