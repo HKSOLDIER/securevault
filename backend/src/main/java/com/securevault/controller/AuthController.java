@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.securevault.service.EmailService;
 
 @RestController
 @RequestMapping("/auth")
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final EmailService emailService;
 
      // ADD THIS
     @GetMapping("/mail-test")
@@ -23,11 +25,28 @@ public class AuthController {
 
         return "Controller reached";
     }
+    
     @GetMapping("/ping")
     public String ping() {
         System.out.println("PING HIT");
         return "pong";
     }
+
+    @GetMapping("/mail-test")
+    public String mailTest() {
+
+        System.out.println("MAIL TEST START");
+
+        emailService.sendVerificationEmail(
+                "harithapriya.85@gmail.com",
+                "TEST123"
+        );
+
+        System.out.println("MAIL TEST END");
+
+        return "mail sent";
+    }
+
     @PostMapping("/register")
     public ResponseEntity<AuthDtos.MessageResponse> register(
             @Valid @RequestBody AuthDtos.RegisterRequest request) {
