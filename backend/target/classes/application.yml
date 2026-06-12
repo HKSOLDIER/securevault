@@ -31,22 +31,19 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
   mail:
-    host: smtp.gmail.com
-    port: 465
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-
     properties:
       mail:
         smtp:
-          auth: true
-          ssl:
-            enable: true
-          starttls:
-            enable: false
           connectiontimeout: 10000
           timeout: 10000
           writetimeout: 10000
+          auth: true
+          starttls:
+            enable: true
+          host: ${MAIL_HOST:smtp.example.com}
+          port: ${MAIL_PORT:465}
+          username: ${MAIL_USERNAME}
+          password: ${MAIL_PASSWORD}
 
 server:
   port: ${PORT:8080}
@@ -57,6 +54,8 @@ server:
   error:
     include-message: never
     include-stacktrace: never
+resend:
+  api-key: ${RESEND_API_KEY}
 
 # ─── Security Configuration ──────────────────────────────────────────────────
 # ─── Security Configuration ──────────────────────────────────────────────────

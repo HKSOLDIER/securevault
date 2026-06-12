@@ -7,6 +7,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.PostConstruct;
 
+import com.resend.Resend;
+import com.resend.services.emails.model.SendEmailRequest;
 
 // @Service
 // @RequiredArgsConstructor
@@ -58,6 +60,8 @@ public class EmailService {
 
     @Value("${spring.mail.username}")
     private String mailUsername;
+    @Value("${resend.api-key}")
+    private String resendApiKey;
 
     @PostConstruct
     public void checkMailConfig() {
@@ -71,61 +75,40 @@ public class EmailService {
     // }
     public void sendVerificationEmail(String to, String token) {
 
-        System.out.println("=== EMAIL DEBUG START ===");
-        System.out.println("STEP 1: sendVerificationEmail() called");
-        System.out.println("STEP 2: Sending TO: " + to);
-        System.out.println("STEP 3: MAIL_USERNAME = " + mailUsername);
-        System.out.println("STEP 4: FRONTEND_URL = " + frontendUrl);
+    String verifyLink =
+            frontendUrl + "/verify-email?token=" + token;
 
-        String verifyLink = frontendUrl + "/verify-email?token=" + token;
-        System.out.println("STEP 5: Verify link = " + verifyLink);
+    try {
 
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            System.out.println("STEP 6: SimpleMailMessage created");
+        Resend resend = new Resend(resendApiKey);
 
-            message.setFrom(mailUsername);
-            message.setTo(to);
-            message.setSubject("Verify Your SecureVault Account");
-            message.setText("""
-                    Welcome to SecureVault!
+        SendEmailRequest request =
+                SendEmailRequest.builder()
+                        .from("onboarding@resend.dev")
+                        .to(to)
+                        .subject("Verify Your SecureVault Account")
+                        .html("""
+                            <h2>Welcome to SecureVault</h2>
 
-                    Click the link below to verify your account:
+                            <p>Click below to verify your account:</p>
 
-                    %s
+                            <a href="%s">
+                                Verify Email
+                            </a>
 
-                    If you did not create this account, ignore this email.
-                    """.formatted(verifyLink));
-            try {
-            System.out.println("STEP 7: Message configured, about to send...");
-            System.out.println("MAIL USERNAME = " + mailUsername);
-            System.out.println("MAIL PASSWORD EXISTS = "
-                    + (System.getenv("MAIL_PASSWORD") != null));
+                            <p>If you did not create this account, ignore this email.</p>
+                            """.formatted(verifyLink))
+                        .build();
 
-            System.out.println("MAIL PASSWORD LENGTH = "
-                    + (System.getenv("MAIL_PASSWORD") == null
-                        ? "NULL"
-                        : System.getenv("MAIL_PASSWORD").length()));
-            mailSender.send(message);
-            System.out.println("STEP 8: ✅ Email sent successfully to " + to);
-                } catch (Exception e) {
+        resend.emails().send(request);
 
-        System.out.println("STEP 8 FAILED");
+        System.out.println("EMAIL SENT SUCCESSFULLY");
+
+    } catch (Exception e) {
+
         e.printStackTrace();
 
-        throw e;
+        throw new RuntimeException("Email sending failed", e);
     }
-
-        } catch (Exception e) {
-            System.out.println("STEP 8: ❌ FAILED at mailSender.send()");
-            System.out.println("ERROR TYPE: " + e.getClass().getName());
-            System.out.println("ERROR MESSAGE: " + e.getMessage());
-            if (e.getCause() != null) {
-                System.out.println("ROOT CAUSE: " + e.getCause().getMessage());
-            }
-            throw e; // rethrow so AuthService also logs it
-        }
-
-        System.out.println("=== EMAIL DEBUG END ===");
-    }
+}
 }
