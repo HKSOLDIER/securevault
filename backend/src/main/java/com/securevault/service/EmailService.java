@@ -78,10 +78,25 @@ public class EmailService {
 
                     If you did not create this account, ignore this email.
                     """.formatted(verifyLink));
+            try {
             System.out.println("STEP 7: Message configured, about to send...");
+            System.out.println("MAIL USERNAME = " + mailUsername);
+            System.out.println("MAIL PASSWORD EXISTS = "
+                    + (System.getenv("MAIL_PASSWORD") != null));
 
+            System.out.println("MAIL PASSWORD LENGTH = "
+                    + (System.getenv("MAIL_PASSWORD") == null
+                        ? "NULL"
+                        : System.getenv("MAIL_PASSWORD").length()));
             mailSender.send(message);
             System.out.println("STEP 8: ✅ Email sent successfully to " + to);
+                } catch (Exception e) {
+
+        System.out.println("STEP 8 FAILED");
+        e.printStackTrace();
+
+        throw e;
+    }
 
         } catch (Exception e) {
             System.out.println("STEP 8: ❌ FAILED at mailSender.send()");

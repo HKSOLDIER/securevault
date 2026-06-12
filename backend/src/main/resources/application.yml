@@ -3,9 +3,9 @@ spring:
     name: securevault-api
 
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://neondb_owner:npg_vyLUa3q9fFKH@ep-wandering-scene-aqg8k6so-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require}
-    username: ${DATABASE_USERNAME:neondb_owner}
-    password: ${DATABASE_PASSWORD:npg_vyLUa3q9fFKH}
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
@@ -30,6 +30,17 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+  mail:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          host: ${MAIL_HOST:smtp.example.com}
+          port: ${MAIL_PORT:587}
+          username: ${MAIL_USERNAME}
+          password: ${MAIL_PASSWORD}
 
 server:
   port: ${PORT:8080}
@@ -77,5 +88,7 @@ logging:
   level:
     com.securevault: INFO
     org.springframework.security: WARN
+    org.springerframework.mail: DEBUG
+    org.springframework.boot.autoconfigure.orm.jpa: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
