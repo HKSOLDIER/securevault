@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
+
 
 // @Service
 // @RequiredArgsConstructor
@@ -47,6 +49,9 @@ public class EmailService {
 
     @Value("${app.frontend.url}")
     private String frontendUrl;
+    
+    @Value("${spring.mail.host}")
+    private String mailHost;
 
     @Value("${spring.mail.port}")
     private String mailPort;
@@ -54,10 +59,16 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String mailUsername;
 
-    @jakarta.annotation.PostConstruct
+    @PostConstruct
     public void checkMailConfig() {
+        System.out.println("MAIL HOST = " + mailHost);
         System.out.println("MAIL PORT = " + mailPort);
+        System.out.println("MAIL USERNAME = " + mailUsername);
     }
+    // @jakarta.annotation.PostConstruct
+    // public void checkMailConfig() {
+    //     System.out.println("MAIL PORT = " + mailPort);
+    // }
     public void sendVerificationEmail(String to, String token) {
 
         System.out.println("=== EMAIL DEBUG START ===");
