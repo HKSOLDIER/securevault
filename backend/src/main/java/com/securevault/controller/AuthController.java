@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final EmailService emailService;
-    
+
      // ADD THIS
     @GetMapping("/mail-test")
     public String mailTest() {
@@ -37,20 +36,7 @@ public class AuthController {
                 .status(HttpStatus.CREATED)
                 .body(authService.register(request));
     }
-    @GetMapping("/mail-test")
-    public String mailTest() {
-
-        System.out.println("MAIL TEST START");
-
-        emailService.sendVerificationEmail(
-                "harithapriya.85@gmail.com",
-                "TEST123"
-        );
-
-        System.out.println("MAIL TEST END");
-
-        return "mail sent";
-    }
+    
 
     @PostMapping("/login")
     public ResponseEntity<AuthDtos.AuthResponse> login(
