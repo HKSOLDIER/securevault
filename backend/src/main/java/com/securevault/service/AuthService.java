@@ -56,6 +56,8 @@ public class AuthService {
                     user.getEmail(),
                     verificationToken
             );
+            System.out.println("EMAIL SERVICE RETURNED SUCCESSFULLY");
+            System.out.println("MAIL PASSWORD LENGTH = " +System.getenv("MAIL_PASSWORD").length());
             System.out.println("REGISTER STEP 2: Email service completed");
 
             log.info("Verification email sent to {}", user.getEmail());
