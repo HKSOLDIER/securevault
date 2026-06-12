@@ -15,6 +15,19 @@ public class AuthController {
 
     private final AuthService authService;
 
+     // ADD THIS
+    @GetMapping("/mail-test")
+    public String mailTest() {
+
+        System.out.println("MAIL TEST ENDPOINT HIT");
+
+        return "Controller reached";
+    }
+    @GetMapping("/ping")
+    public String ping() {
+        System.out.println("PING HIT");
+        return "pong";
+    }
     @PostMapping("/register")
     public ResponseEntity<AuthDtos.MessageResponse> register(
             @Valid @RequestBody AuthDtos.RegisterRequest request) {
