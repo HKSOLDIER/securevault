@@ -30,6 +30,20 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+  mail:
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+          auth: true
+          starttls:
+            enable: true
+          host: ${MAIL_HOST:smtp.example.com}
+          port: ${MAIL_PORT:587}
+          username: ${MAIL_USERNAME}
+          password: ${MAIL_PASSWORD}
 
 server:
   port: ${PORT:8080}
@@ -45,7 +59,7 @@ server:
 # ─── Security Configuration ──────────────────────────────────────────────────
 security:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz12}
     access-token-expiry-ms: 900000
     refresh-token-expiry-ms: 604800000
   argon2:
@@ -54,9 +68,9 @@ security:
     parallelism: 4
     hash-length: 32
     salt-length: 16
-  pepper: ${PEPPER_SECRET}
+  pepper: ${PEPPER_SECRET:abcdefghijklmnopqrstuvwxyz123456}
   cors:
-    allowed-origins: ${CORS_ORIGINS}
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,https://securevault-three.vercel.app}
   rate-limit:
     login-capacity: 5
     login-refill-minutes: 15
@@ -77,5 +91,7 @@ logging:
   level:
     com.securevault: INFO
     org.springframework.security: WARN
+    org.springerframework.mail: DEBUG
+    org.springframework.boot.autoconfigure.orm.jpa: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"

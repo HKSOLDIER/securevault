@@ -19,7 +19,7 @@ public class AuthController {
 
      // ADD THIS
     @GetMapping("/mail-test-controller")
-    public String mailTest() {
+    public String mailTest_controller() {
 
         System.out.println("MAIL TEST ENDPOINT HIT");
 
